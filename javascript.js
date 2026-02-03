@@ -3,7 +3,15 @@ let isAnimating = false;
 let envelopes = [];
 let winnerIndex = -1;
 
-// Create different red envelope designs
+// Cấu hình hiệu ứng sóng
+const waveConfig = {
+  duration: 3000,
+  speed: 80,
+  bounceSpeed: 200,
+  direction: "row",
+};
+
+// Tạo các mẫu phong bì
 function createEnvelopeSVG(index) {
   const patterns = [
     // 0: PHÚC
@@ -25,7 +33,7 @@ function createEnvelopeSVG(index) {
       <rect x="32" y="124" width="36" height="2" rx="1" fill="#FFD700" opacity="0.4"/>
     </svg>`,
 
-    // 1: LỌC
+    // 1: LỘC
     `<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="g1-${index}" x1="0" y1="0" x2="1" y2="1">
@@ -62,577 +70,332 @@ function createEnvelopeSVG(index) {
       <rect x="24" y="118" width="52" height="2.5" rx="1.5" fill="#FFD700" opacity="0.6"/>
       <rect x="32" y="124" width="36" height="2" rx="1" fill="#FFD700" opacity="0.4"/>
     </svg>`,
-
-    // 3: HOA MAI
-    `<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="g3-${index}" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#DC143C"/><stop offset="100%" stop-color="#8B0000"/>
-        </linearGradient>
-      </defs>
-      <rect y="12" width="100" height="128" rx="10" fill="url(#g3-${index})"/>
-      <rect x="5" y="17" width="90" height="118" rx="7" fill="none" stroke="#FFD700" stroke-width="1.8" opacity="0.7"/>
-      <ellipse cx="50" cy="8" rx="6" ry="5" fill="#FFD700" opacity="0.9"/>
-      <rect x="48" y="11" width="4" height="8" fill="#FFD700" opacity="0.85"/>
-      <path d="M50 135 Q48 100 35 75 Q28 58 30 40" stroke="#8B5E3C" stroke-width="3" fill="none" stroke-linecap="round"/>
-      <path d="M38 62 Q50 52 58 58" stroke="#8B5E3C" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <path d="M33 48 Q42 35 52 42" stroke="#8B5E3C" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <g transform="translate(30,42)">
-        <ellipse cx="0" cy="-9" rx="4" ry="7" fill="#FFE566" opacity="0.95" transform="rotate(0)"/>
-        <ellipse cx="0" cy="-9" rx="4" ry="7" fill="#FFE566" opacity="0.95" transform="rotate(72)"/>
-        <ellipse cx="0" cy="-9" rx="4" ry="7" fill="#FFE566" opacity="0.95" transform="rotate(144)"/>
-        <ellipse cx="0" cy="-9" rx="4" ry="7" fill="#FFE566" opacity="0.95" transform="rotate(216)"/>
-        <ellipse cx="0" cy="-9" rx="4" ry="7" fill="#FFE566" opacity="0.95" transform="rotate(288)"/>
-        <circle cx="0" cy="0" r="3" fill="#FF8C00"/>
-      </g>
-      <g transform="translate(58,55)">
-        <ellipse cx="0" cy="-7" rx="3.2" ry="5.5" fill="#FFD933" opacity="0.9" transform="rotate(0)"/>
-        <ellipse cx="0" cy="-7" rx="3.2" ry="5.5" fill="#FFD933" opacity="0.9" transform="rotate(72)"/>
-        <ellipse cx="0" cy="-7" rx="3.2" ry="5.5" fill="#FFD933" opacity="0.9" transform="rotate(144)"/>
-        <ellipse cx="0" cy="-7" rx="3.2" ry="5.5" fill="#FFD933" opacity="0.9" transform="rotate(216)"/>
-        <ellipse cx="0" cy="-7" rx="3.2" ry="5.5" fill="#FFD933" opacity="0.9" transform="rotate(288)"/>
-        <circle cx="0" cy="0" r="2.2" fill="#FF8C00"/>
-      </g>
-      <g transform="translate(52,38)">
-        <ellipse cx="0" cy="-4" rx="2.5" ry="4" fill="#FFE566" opacity="0.85" transform="rotate(0)"/>
-        <ellipse cx="0" cy="-4" rx="2.5" ry="4" fill="#FFE566" opacity="0.85" transform="rotate(120)"/>
-        <ellipse cx="0" cy="-4" rx="2.5" ry="4" fill="#FFE566" opacity="0.85" transform="rotate(240)"/>
-        <circle cx="0" cy="0" r="1.8" fill="#FF8C00"/>
-      </g>
-      <ellipse cx="25" cy="68" rx="5" ry="2.5" fill="#4CAF50" opacity="0.8" transform="rotate(-30,25,68)"/>
-      <ellipse cx="40" cy="55" rx="4" ry="2" fill="#4CAF50" opacity="0.7" transform="rotate(15,40,55)"/>
-    </svg>`,
-
-    // 4: HOA ĐÀO
-    `<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="g4-${index}" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#FF3333"/><stop offset="100%" stop-color="#990000"/>
-        </linearGradient>
-      </defs>
-      <rect y="12" width="100" height="128" rx="10" fill="url(#g4-${index})"/>
-      <rect x="5" y="17" width="90" height="118" rx="7" fill="none" stroke="#FFD700" stroke-width="1.8" opacity="0.7"/>
-      <ellipse cx="50" cy="8" rx="6" ry="5" fill="#FFD700" opacity="0.9"/>
-      <rect x="48" y="11" width="4" height="8" fill="#FFD700" opacity="0.85"/>
-      <path d="M50 135 Q52 105 65 78 Q72 60 68 38" stroke="#6D4C2A" stroke-width="3" fill="none" stroke-linecap="round"/>
-      <path d="M63 55 Q52 48 46 56" stroke="#6D4C2A" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <path d="M67 42 Q58 32 50 40" stroke="#6D4C2A" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <g transform="translate(68,40)">
-        <ellipse cx="0" cy="-8" rx="5" ry="7" fill="#FFB6C1" opacity="0.95" transform="rotate(0)"/>
-        <ellipse cx="0" cy="-8" rx="5" ry="7" fill="#FFB6C1" opacity="0.95" transform="rotate(60)"/>
-        <ellipse cx="0" cy="-8" rx="5" ry="7" fill="#FFB6C1" opacity="0.95" transform="rotate(120)"/>
-        <ellipse cx="0" cy="-8" rx="5" ry="7" fill="#FFB6C1" opacity="0.95" transform="rotate(180)"/>
-        <ellipse cx="0" cy="-8" rx="5" ry="7" fill="#FFB6C1" opacity="0.95" transform="rotate(240)"/>
-        <ellipse cx="0" cy="-8" rx="5" ry="7" fill="#FFB6C1" opacity="0.95" transform="rotate(300)"/>
-        <circle cx="0" cy="0" r="3" fill="#FF69B4"/>
-      </g>
-      <g transform="translate(46,52)">
-        <ellipse cx="0" cy="-6.5" rx="4" ry="5.5" fill="#FF9EB5" opacity="0.9" transform="rotate(0)"/>
-        <ellipse cx="0" cy="-6.5" rx="4" ry="5.5" fill="#FF9EB5" opacity="0.9" transform="rotate(60)"/>
-        <ellipse cx="0" cy="-6.5" rx="4" ry="5.5" fill="#FF9EB5" opacity="0.9" transform="rotate(120)"/>
-        <ellipse cx="0" cy="-6.5" rx="4" ry="5.5" fill="#FF9EB5" opacity="0.9" transform="rotate(180)"/>
-        <ellipse cx="0" cy="-6.5" rx="4" ry="5.5" fill="#FF9EB5" opacity="0.9" transform="rotate(240)"/>
-        <ellipse cx="0" cy="-6.5" rx="4" ry="5.5" fill="#FF9EB5" opacity="0.9" transform="rotate(300)"/>
-        <circle cx="0" cy="0" r="2.2" fill="#FF69B4"/>
-      </g>
-      <g transform="translate(58,32)">
-        <ellipse cx="0" cy="-4" rx="2.8" ry="3.5" fill="#FFB6C1" opacity="0.8" transform="rotate(0)"/>
-        <ellipse cx="0" cy="-4" rx="2.8" ry="3.5" fill="#FFB6C1" opacity="0.8" transform="rotate(120)"/>
-        <ellipse cx="0" cy="-4" rx="2.8" ry="3.5" fill="#FFB6C1" opacity="0.8" transform="rotate(240)"/>
-        <circle cx="0" cy="0" r="1.8" fill="#FF69B4"/>
-      </g>
-      <ellipse cx="72" cy="58" rx="5" ry="2.2" fill="#4CAF50" opacity="0.75" transform="rotate(25,72,58)"/>
-      <ellipse cx="58" cy="45" rx="4" ry="2" fill="#4CAF50" opacity="0.7" transform="rotate(-10,58,45)"/>
-    </svg>`,
-
-    // 5: HOA MAI + ĐÀO mixed
-    `<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="g5-${index}" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#E00000"/><stop offset="100%" stop-color="#7A0000"/>
-        </linearGradient>
-      </defs>
-      <rect y="12" width="100" height="128" rx="10" fill="url(#g5-${index})"/>
-      <rect x="5" y="17" width="90" height="118" rx="7" fill="none" stroke="#FFD700" stroke-width="1.8" opacity="0.7"/>
-      <ellipse cx="50" cy="8" rx="6" ry="5" fill="#FFD700" opacity="0.9"/>
-      <rect x="48" y="11" width="4" height="8" fill="#FFD700" opacity="0.85"/>
-      <path d="M50 135 Q50 100 50 70" stroke="#6D4C2A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-      <path d="M50 85 Q36 78 28 68" stroke="#6D4C2A" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <path d="M50 72 Q64 65 72 55" stroke="#6D4C2A" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <path d="M50 60 Q42 50 36 42" stroke="#6D4C2A" stroke-width="1.8" fill="none" stroke-linecap="round"/>
-      <g transform="translate(36,40)">
-        <ellipse cx="0" cy="-7" rx="3.5" ry="5.5" fill="#FFE566" opacity="0.95" transform="rotate(0)"/>
-        <ellipse cx="0" cy="-7" rx="3.5" ry="5.5" fill="#FFE566" opacity="0.95" transform="rotate(72)"/>
-        <ellipse cx="0" cy="-7" rx="3.5" ry="5.5" fill="#FFE566" opacity="0.95" transform="rotate(144)"/>
-        <ellipse cx="0" cy="-7" rx="3.5" ry="5.5" fill="#FFE566" opacity="0.95" transform="rotate(216)"/>
-        <ellipse cx="0" cy="-7" rx="3.5" ry="5.5" fill="#FFE566" opacity="0.95" transform="rotate(288)"/>
-        <circle cx="0" cy="0" r="2.2" fill="#FF8C00"/>
-      </g>
-      <g transform="translate(72,53)">
-        <ellipse cx="0" cy="-6" rx="3.8" ry="5" fill="#FFB6C1" opacity="0.93" transform="rotate(0)"/>
-        <ellipse cx="0" cy="-6" rx="3.8" ry="5" fill="#FFB6C1" opacity="0.93" transform="rotate(60)"/>
-        <ellipse cx="0" cy="-6" rx="3.8" ry="5" fill="#FFB6C1" opacity="0.93" transform="rotate(120)"/>
-        <ellipse cx="0" cy="-6" rx="3.8" ry="5" fill="#FFB6C1" opacity="0.93" transform="rotate(180)"/>
-        <ellipse cx="0" cy="-6" rx="3.8" ry="5" fill="#FFB6C1" opacity="0.93" transform="rotate(240)"/>
-        <ellipse cx="0" cy="-6" rx="3.8" ry="5" fill="#FFB6C1" opacity="0.93" transform="rotate(300)"/>
-        <circle cx="0" cy="0" r="2" fill="#FF69B4"/>
-      </g>
-      <g transform="translate(28,66)">
-        <ellipse cx="0" cy="-4" rx="2.5" ry="4" fill="#FFE566" opacity="0.85" transform="rotate(0)"/>
-        <ellipse cx="0" cy="-4" rx="2.5" ry="4" fill="#FFE566" opacity="0.85" transform="rotate(120)"/>
-        <ellipse cx="0" cy="-4" rx="2.5" ry="4" fill="#FFE566" opacity="0.85" transform="rotate(240)"/>
-        <circle cx="0" cy="0" r="1.6" fill="#FF8C00"/>
-      </g>
-      <g transform="translate(56,48)">
-        <ellipse cx="0" cy="-3.5" rx="2.2" ry="3.2" fill="#FFB6C1" opacity="0.8" transform="rotate(0)"/>
-        <ellipse cx="0" cy="-3.5" rx="2.2" ry="3.2" fill="#FFB6C1" opacity="0.8" transform="rotate(120)"/>
-        <ellipse cx="0" cy="-3.5" rx="2.2" ry="3.2" fill="#FFB6C1" opacity="0.8" transform="rotate(240)"/>
-        <circle cx="0" cy="0" r="1.4" fill="#FF69B4"/>
-      </g>
-      <ellipse cx="42" cy="52" rx="4" ry="1.8" fill="#4CAF50" opacity="0.7" transform="rotate(-20,42,52)"/>
-      <ellipse cx="65" cy="62" rx="4.5" ry="2" fill="#4CAF50" opacity="0.72" transform="rotate(18,65,62)"/>
-      <ellipse cx="33" cy="75" rx="3.5" ry="1.6" fill="#4CAF50" opacity="0.65" transform="rotate(-5,33,75)"/>
-    </svg>`,
   ];
 
-  // Randomly assign flower-only patterns sometimes: indices 3,4,5
-  // For text patterns use index % 3, for flowers pick randomly among 3,4,5
-  const textPatterns = [patterns[0], patterns[1], patterns[2]];
-  const flowerPatterns = [patterns[3], patterns[4], patterns[5]];
-
-  // Lấy cols từ layout hiện tại
-  const { cols } = getLayout();
-  const col = index % cols;
-  const row = Math.floor(index / cols);
-  
-  // Xen kẽ checkerboard: (row + col) % 2
-  if ((row + col) % 2 === 0) {
-    // text envelope
-    return textPatterns[index % 3];
-  } else {
-    // flower envelope
-    return flowerPatterns[index % 3];
-  }
+  return patterns[index % patterns.length];
 }
 
-// ── layout config by viewport ──
-function getLayout() {
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  
-  // Desktop/Laptop - giảm kích thước một chút
-  if (vw >= 1200) return { cols: 12, rows: 5, envW: 85, envH: 110 };
-  else if (vw >= 900) return { cols: 10, rows: 4, envW: 80, envH: 105 };
-  else if (vw >= 768) return { cols: 8, rows: 4, envW: 75, envH: 100 };
-  // Tablet
-  else if (vw >= 600) return { cols: 6, rows: 4, envW: 65, envH: 88 };
-  // Mobile - optimized
-  else if (vw >= 480) return { cols: 5, rows: 4, envW: 58, envH: 80 };
-  else if (vw >= 400) return { cols: 4, rows: 4, envW: 52, envH: 72 };
-  else return { cols: 3, rows: 4, envW: 45, envH: 62 };
-}
+// Xử lý upload file
+document.getElementById("file-upload").addEventListener("change", function (e) {
+  const file = e.target.files[0];
+  if (!file) return;
 
-// Seeded pseudo-random (repeatable per index so resize is stable)
-function seededRand(seed) {
-  let s = seed;
-  return function () {
-    s = (s * 1664525 + 1013904223) & 0x7fffffff;
-    return s / 0x7fffffff;
+  const reader = new FileReader();
+  reader.onload = function (event) {
+    try {
+      const data = new Uint8Array(event.target.result);
+      const workbook = XLSX.read(data, { type: "array" });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+      studentList = json.slice(1).map((row) => ({
+        stt: row[0],
+        mssv: row[1],
+        hoLot: row[2],
+        ten: row[3],
+      }));
+
+      if (studentList.length > 0) {
+        document.getElementById("start-btn").disabled = false;
+        document.getElementById("info-text").textContent =
+          `✅ Đã tải ${studentList.length} sinh viên. Nhấn "Quay Số" để chơi!`;
+        initEnvelopes();
+      }
+    } catch (error) {
+      console.error(error);
+      document.getElementById("info-text").textContent =
+        "❌ Lỗi đọc file. Kiểm tra định dạng Excel!";
+    }
   };
-}
+  reader.readAsArrayBuffer(file);
+});
 
-// Initialize envelopes – scattered layout
+// Khởi tạo phong bì với kích thước phù hợp thiết bị
 function initEnvelopes() {
   const container = document.getElementById("envelope-container");
   container.innerHTML = "";
   envelopes = [];
 
-  const { cols, rows, envW, envH } = getLayout();
-  const total = cols * rows;
-  const cW = container.clientWidth || window.innerWidth * 0.92;
-  const cH = container.clientHeight || window.innerHeight * 0.82;
-  const padX = 18,
-    padY = 18;
-
-  const cellW = (cW - padX * 2) / cols;
-  const cellH = (cH - padY * 2) / rows;
-
-  // big jitter – up to 40% of cell each side
-  const jitterFracX = 0.38;
-  const jitterFracY = 0.32;
-
-  for (let i = 0; i < total; i++) {
-    const rand = seededRand(i * 7 + 13);
-
-    const col = i % cols;
-    const row = Math.floor(i / cols);
-
-    const baseX = padX + col * cellW + cellW / 2;
-    const baseY = padY + row * cellH + cellH / 2;
-
-    const x = baseX - envW / 2 + (rand() - 0.5) * cellW * jitterFracX * 2;
-    const y = baseY - envH / 2 + (rand() - 0.5) * cellH * jitterFracY * 2;
-
-    // rotation between -9° and +9°
-    const rot = (rand() - 0.5) * 18;
-
-    const envelope = document.createElement("div");
-    envelope.className = "envelope";
-    envelope.style.setProperty("--w", envW + "px");
-    envelope.style.setProperty("--h", envH + "px");
-    // initial hidden state: shifted down + scaled down
-    envelope.style.transform = `translateY(50px) scale(0.6)`;
-    // store final transform for .appeared
-    envelope.dataset.finalTransform = `translateY(0) scale(1)`;
-    envelope.innerHTML = createEnvelopeSVG(i);
-    container.appendChild(envelope);
-    envelopes.push(envelope);
-
-    // staggered entrance: after short delay, add .appeared + set final transform
-    setTimeout(
-      () => {
-        envelope.style.transform = envelope.dataset.finalTransform;
-        envelope.classList.add("appeared");
-      },
-      60 + i * 45,
-    );
+  if (studentList.length === 0) {
+    container.innerHTML = `<div style="grid-column: 1/-1; text-align:center; color:#fff; padding:40px;">Chưa có dữ liệu</div>`;
+    return;
   }
+
+  // Tính toán kích thước phong bì dựa trên thiết bị
+  const isMobile = window.innerWidth < 768;
+  const isSmallMobile = window.innerWidth < 480;
+  
+  studentList.forEach((_, i) => {
+    const div = document.createElement("div");
+    div.className = "envelope";
+    
+    // Đặt kích thước động
+    if (isSmallMobile) {
+      div.style.setProperty("--w", "65px");
+      div.style.setProperty("--h", "85px");
+    } else if (isMobile) {
+      div.style.setProperty("--w", "75px");
+      div.style.setProperty("--h", "98px");
+    } else {
+      div.style.setProperty("--w", "90px");
+      div.style.setProperty("--h", "118px");
+    }
+    
+    div.innerHTML = createEnvelopeSVG(i);
+    container.appendChild(div);
+    envelopes.push(div);
+
+    setTimeout(() => div.classList.add("appeared"), i * 35);
+  });
 }
 
-// Re-init on resize (debounced)
-let _resizeTimer;
-window.addEventListener("resize", () => {
-  clearTimeout(_resizeTimer);
-  _resizeTimer = setTimeout(() => {
-    if (!isAnimating) initEnvelopes();
-  }, 250);
-});
+// Tạo đường đi cho hiệu ứng sóng
+function createWavePath() {
+  const container = document.getElementById("envelope-container");
+  const style = window.getComputedStyle(container);
+  const columns = style.gridTemplateColumns.split(" ").length;
+  const rows = Math.ceil(envelopes.length / columns);
 
-// Handle file upload
-document
-  .getElementById("file-upload")
-  .addEventListener("change", function (e) {
-    const file = e.target.files[0];
-    if (!file) return;
+  const path = [];
 
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      try {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: "array" });
-        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(firstSheet, {
-          header: 1,
-        });
-
-        // Bỏ hàng tiêu đề (hàng đầu tiên)
-        const dataWithoutHeader = jsonData.slice(1);
-
-        studentList = dataWithoutHeader
-          .filter(
-            (row) =>
-              row.length >= 4 && row[0] && row[1] && row[2] && row[3],
-          )
-          .map((row) => ({
-            stt: row[0],
-            mssv: row[1],
-            hoLot: row[2],
-            ten: row[3],
-          }));
-
-        if (studentList.length > 0) {
-          document.getElementById("info-text").textContent =
-            `✅ Đã tải ${studentList.length} sinh viên. Nhấn "Quay Số" để chơi!`;
-          document.getElementById("start-btn").disabled = false;
-          initEnvelopes();
-        } else {
-          alert("File Excel không có dữ liệu hợp lệ!");
+  if (waveConfig.direction === "row") {
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < columns; c++) {
+        const index = r * columns + c;
+        if (index < envelopes.length) {
+          path.push(index);
         }
-      } catch (error) {
-        alert("Lỗi khi đọc file Excel: " + error.message);
       }
-    };
-    reader.readAsArrayBuffer(file);
-  });
-
-// Create fireworks effect from winner envelope
-function createFireworks(envelope) {
-  const rect = envelope.getBoundingClientRect();
-  const centerX = rect.left + rect.width / 2;
-  const centerY = rect.top + rect.height / 2;
-
-  const colors = [
-    "#FFD700",
-    "#FF6B6B",
-    "#4CAF50",
-    "#2196F3",
-    "#FF9800",
-    "#FF1744",
-    "#9C27B0",
-  ];
-  const particles = 50;
-
-  for (let i = 0; i < particles; i++) {
-    const firework = document.createElement("div");
-    firework.className = "firework";
-    firework.style.left = centerX + "px";
-    firework.style.top = centerY + "px";
-    firework.style.background =
-      colors[Math.floor(Math.random() * colors.length)];
-
-    const angle = (Math.PI * 2 * i) / particles;
-    const velocity = 100 + Math.random() * 100;
-    const tx = Math.cos(angle) * velocity;
-    const ty = Math.sin(angle) * velocity;
-
-    firework.style.setProperty("--tx", tx + "px");
-    firework.style.setProperty("--ty", ty + "px");
-    firework.style.animation = `firework-explosion ${0.8 + Math.random() * 0.4}s ease-out forwards`;
-
-    document.body.appendChild(firework);
-
-    setTimeout(() => firework.remove(), 1200);
-  }
-}
-
-// Create falling sparkles effect
-function createFallingSparkles() {
-  const sparkleEmojis = ["✨", "⭐", "🌟", "💫", "🎊", "🎉"];
-  const colors = [
-    "#FFD700",
-    "#FFA500",
-    "#FF6B6B",
-    "#FF1744",
-    "#9C27B0",
-    "#2196F3",
-  ];
-
-  // Create sparkles from top of screen
-  for (let i = 0; i < 30; i++) {
-    setTimeout(() => {
-      // Sparkle emoji
-      const sparkle = document.createElement("div");
-      sparkle.className = "falling-sparkle";
-      sparkle.style.left = Math.random() * 100 + "%";
-      sparkle.style.top = "-50px";
-      sparkle.style.setProperty("--size", 15 + Math.random() * 25 + "px");
-      sparkle.style.setProperty(
-        "--duration",
-        2 + Math.random() * 2 + "s",
-      );
-      sparkle.style.setProperty(
-        "--fall-distance",
-        400 + Math.random() * 400 + "px",
-      );
-      document.body.appendChild(sparkle);
-
-      setTimeout(() => sparkle.remove(), 2000);
-
-      // Star particle
-      const star = document.createElement("div");
-      star.className = "star-particle";
-      star.textContent =
-        sparkleEmojis[Math.floor(Math.random() * sparkleEmojis.length)];
-      star.style.left = Math.random() * 100 + "%";
-      star.style.top = "-30px";
-      star.style.color =
-        colors[Math.floor(Math.random() * colors.length)];
-      star.style.setProperty(
-        "--duration",
-        2.5 + Math.random() * 1.5 + "s",
-      );
-      star.style.setProperty(
-        "--fall-distance",
-        500 + Math.random() * 300 + "px",
-      );
-      star.style.setProperty(
-        "--drift",
-        (Math.random() - 0.5) * 200 + "px",
-      );
-      star.style.setProperty(
-        "--rotation",
-        Math.random() * 720 - 360 + "deg",
-      );
-      document.body.appendChild(star);
-
-      setTimeout(() => star.remove(), 2000);
-    }, i * 100);
-  }
-}
-
-// Create confetti effect
-function createConfetti() {
-  const colors = ["#FFD700", "#FF6B6B", "#4CAF50", "#2196F3", "#FF9800"];
-  for (let i = 0; i < 100; i++) {
-    setTimeout(() => {
-      const confetti = document.createElement("div");
-      confetti.className = "confetti";
-      confetti.style.left = Math.random() * 100 + "%";
-      confetti.style.background =
-        colors[Math.floor(Math.random() * colors.length)];
-      confetti.style.animationDelay = Math.random() * 0.5 + "s";
-      document.body.appendChild(confetti);
-
-      setTimeout(() => confetti.remove(), 2000);
-    }, i * 20);
-  }
-}
-
-// Start animation
-document
-  .getElementById("start-btn")
-  .addEventListener("click", function () {
-    if (isAnimating || studentList.length === 0) return;
-
-    isAnimating = true;
-    this.disabled = true;
-    document.getElementById("info-text").textContent =
-      "🎊 Đang quay số... 🎊";
-
-    // Randomly select winner index
-    winnerIndex = Math.floor(Math.random() * envelopes.length);
-
-    // Start bouncing animation with random delays
-    envelopes.forEach((envelope, index) => {
-      const delay = Math.random() * 500;
-      setTimeout(() => {
-        envelope.classList.add("bouncing");
-      }, delay);
-    });
-
-    // Animation duration: 3-3.5 seconds
-    const animationDuration = 3000 + Math.random() * 500;
-
-    // Gradually slow down and stop animations
-    setTimeout(() => {
-      // First, fade out non-winners smoothly
-      envelopes.forEach((envelope, index) => {
-        if (index !== winnerIndex) {
-          envelope.classList.remove("bouncing");
-          envelope.classList.add("fading");
+    }
+  } else {
+    for (let c = 0; c < columns; c++) {
+      for (let r = 0; r < rows; r++) {
+        const index = r * columns + c;
+        if (index < envelopes.length) {
+          path.push(index);
         }
-      });
+      }
+    }
+  }
 
-      // Highlight winner with glow
-      setTimeout(() => {
-        envelopes[winnerIndex].classList.remove("bouncing");
-        envelopes[winnerIndex].classList.add("winner-highlight");
+  return path;
+}
 
-        // Create fireworks from winner envelope
-        createFireworks(envelopes[winnerIndex]);
+// Hiệu ứng sóng
+async function applyWaveEffect(winnerIdx) {
+  const { duration, speed, bounceSpeed } = waveConfig;
+  const path = createWavePath();
+  const startTime = Date.now();
+  const cycleTime = path.length * speed;
+  const numCycles = Math.ceil(duration / cycleTime);
 
-        // Show winner after fireworks
-        setTimeout(() => {
-          showWinner();
-        }, 800);
-      }, 1000);
-    }, animationDuration);
+  let currentCycle = 0;
+
+  return new Promise((resolve) => {
+    function runWaveCycle() {
+      if (currentCycle >= numCycles || Date.now() - startTime >= duration) {
+        resolve();
+        return;
+      }
+
+      let currentIndex = 0;
+
+      function moveWave() {
+        if (currentIndex >= path.length) {
+          currentCycle++;
+          setTimeout(runWaveCycle, speed);
+          return;
+        }
+
+        const envelopeIndex = path[currentIndex];
+        const envelope = envelopes[envelopeIndex];
+
+        envelope.classList.add("wave-active");
+
+        if (currentIndex > 0) {
+          const prevIndex = path[currentIndex - 1];
+          envelopes[prevIndex].classList.remove("wave-active");
+        }
+
+        if (currentIndex === path.length - 1) {
+          setTimeout(() => {
+            envelope.classList.remove("wave-active");
+          }, bounceSpeed);
+        }
+
+        currentIndex++;
+
+        if (Date.now() - startTime >= duration) {
+          envelopes.forEach((env) => env.classList.remove("wave-active"));
+          resolve();
+          return;
+        }
+
+        setTimeout(moveWave, speed);
+      }
+
+      moveWave();
+    }
+
+    runWaveCycle();
   });
+}
 
-// Show winner
-function showWinner() {
-  const winner =
-    studentList[Math.floor(Math.random() * studentList.length)];
+// Hiệu ứng lấp lánh
+function createSparkles() {
+  const sparkles = ["✨", "⭐", "🌟", "💫", "🎉", "🎊"];
+  const overlay = document.getElementById("overlay");
+  
+  for (let i = 0; i < 15; i++) {
+    const sparkle = document.createElement("div");
+    sparkle.className = "sparkle";
+    sparkle.textContent = sparkles[Math.floor(Math.random() * sparkles.length)];
+    
+    // Màu sắc ngẫu nhiên
+    const colors = ["#FFD700", "#FFA500", "#FF6B6B", "#DC143C", "#FF1493", "#00FFFF"];
+    sparkle.style.color = colors[Math.floor(Math.random() * colors.length)];
+    
+    // Kích thước ngẫu nhiên
+    const size = Math.random() * 30 + 20;
+    sparkle.style.fontSize = `${size}px`;
+    
+    // Vị trí ngẫu nhiên
+    sparkle.style.left = `${Math.random() * 100}%`;
+    
+    // Thời gian rơi ngẫu nhiên
+    const duration = Math.random() * 3 + 2;
+    sparkle.style.animationDuration = `${duration}s`;
+    
+    overlay.appendChild(sparkle);
+    
+    // Xóa sau khi hiệu ứng kết thúc
+    setTimeout(() => {
+      sparkle.remove();
+    }, duration * 1000);
+  }
+}
+
+// Hiển thị kết quả
+function showResult() {
+  const winner = studentList[winnerIndex];
   const overlay = document.getElementById("overlay");
 
-  createConfetti();
-
+  // Tạo envelope chiến thắng lớn ở giữa
   overlay.innerHTML = `
-    <div class="result-wrapper" id="result-wrapper">
-      <div class="envelope-stage" id="envelope-stage">
-        <div class="svg-wrap-result">${createEnvelopeSVG(winnerIndex)}
-          <div class="paper-pop" id="paper-pop">
-            <div class="p-title">🎉 CHÚC MỪNG 🎉</div>
-            <div class="p-line"><div>STT</div><div>${winner.stt}</div></div>
-            <div class="p-line"><div>MSSV</div><div>${winner.mssv}</div></div>
-            <div class="p-line"><div>Họ tên</div><div>${winner.hoLot} ${winner.ten}</div></div>
-          </div>
-        </div>
+    <div class="winner-envelope-container">
+      <div class="winner-envelope">
+        ${createEnvelopeSVG(winnerIndex)}
       </div>
-        <div class="result-card" id="result-card">
-        <div class="result-card-inner">
-          <div class="result-title">🎉 CHÚC MỪNG 🎉</div>
-          <div class="result-row"><span class="result-label">STT</span><span class="result-value">${winner.stt}</span></div>
-          <div class="result-row"><span class="result-label">MSSV</span><span class="result-value">${winner.mssv}</span></div>
-          <div class="result-row"><span class="result-label">Họ tên</span><span class="result-value">${winner.hoLot} ${winner.ten}</span></div>
-          <button class="close-btn" onclick="closeOverlay()">Đóng</button>
+      <div class="winner-card">
+        <div class="winner-title">🎉 CHÚC MỪNG 🎉</div>
+        <div class="winner-row">
+          <span class="winner-label">STT</span>
+          <span class="winner-value">${winner.stt}</span>
         </div>
+        <div class="winner-row">
+          <span class="winner-label">MSSV</span>
+          <span class="winner-value">${winner.mssv}</span>
+        </div>
+        <div class="winner-row">
+          <span class="winner-label">Họ tên</span>
+          <span class="winner-value">${winner.hoLot} ${winner.ten}</span>
+        </div>
+        <button class="close-btn" onclick="closeOverlay()">Đóng</button>
       </div>
     </div>
   `;
 
   overlay.classList.add("active");
-  createFallingSparkles();
-
-  // Step 1: envelope appears
-  // Step 2: after 1.2s paper pops up from envelope
-  setTimeout(() => {
-    const paperPop = document.getElementById("paper-pop");
-    if (paperPop) paperPop.classList.add("popped");
-  }, 1200);
-
-  // Step 3: after 2.6s hide stage 1 and show big card
-  setTimeout(() => {
-    const stage = document.getElementById("envelope-stage");
-    const card = document.getElementById("result-card");
-    const paperPop = document.getElementById("paper-pop");
-
-    if (stage) stage.classList.add("hidden");
-    if (card) card.classList.add("visible");
-
-    // SỬA: Ẩn ngay lá thăm nhỏ để tránh hiện 2 cái cùng lúc
-    if (paperPop) {
-      paperPop.style.opacity = "0";
-    }
-  }, 2600);
-
-  // sparkles keep falling
+  
+  // Tạo hiệu ứng lấp lánh
+  createSparkles();
+  
+  // Lặp lại hiệu ứng lấp lánh mỗi 1.5 giây
   const sparkleInterval = setInterval(() => {
-    createFallingSparkles();
-  }, 3000);
+    createSparkles();
+  }, 1500);
+  
+  // Dừng sau 10 giây
   setTimeout(() => {
     clearInterval(sparkleInterval);
-  }, 15000);
+  }, 10000);
 }
 
-// Close overlay
+// Bắt đầu animation
+async function startAnimation() {
+  if (isAnimating || studentList.length === 0) return;
+
+  isAnimating = true;
+  document.getElementById("start-btn").disabled = true;
+  document.getElementById("info-text").textContent = "🎲 Đang quay số...";
+
+  // Random winner
+  winnerIndex = Math.floor(Math.random() * studentList.length);
+
+  // Chạy hiệu ứng sóng
+  await applyWaveEffect(winnerIndex);
+
+  // Làm mờ các envelope khác
+  envelopes.forEach((env, i) => {
+    if (i !== winnerIndex) {
+      env.classList.add("fading");
+    }
+  });
+
+  // Highlight winner
+  setTimeout(() => {
+    envelopes[winnerIndex].classList.add("winner-highlight");
+  }, 400);
+
+  // Hiển thị kết quả
+  setTimeout(() => {
+    showResult();
+  }, 1800);
+}
+
+// Đóng overlay
 function closeOverlay() {
-  document.getElementById("overlay").classList.remove("active");
+  const overlay = document.getElementById("overlay");
+  overlay.classList.remove("active");
+  overlay.innerHTML = "";
+  
   document.getElementById("start-btn").disabled = false;
   document.getElementById("info-text").textContent =
     `✅ Đã tải ${studentList.length} sinh viên. Nhấn "Quay Số" để chơi!`;
   isAnimating = false;
 
-  // Remove all animation classes
+  // Xóa tất cả các class hiệu ứng
   envelopes.forEach((envelope) => {
-    envelope.classList.remove("bouncing", "fading", "winner-highlight");
+    envelope.classList.remove("wave-active", "fading", "winner-highlight");
   });
 
+  // Khởi tạo lại envelopes
   initEnvelopes();
 }
 
 // Color picker functionality
 const colorPicker = document.getElementById("bg-color-picker");
 const headerColorPicker = document.getElementById("header-color-picker");
-const presetColors = document.querySelectorAll(".preset-color:not(.header-color-preset)");
+const presetColors = document.querySelectorAll(
+  ".preset-color:not(.header-color-preset)"
+);
 const headerPresetColors = document.querySelectorAll(".header-color-preset");
 
-// Function to change background
+// Thay đổi background
 function changeBackground(gradient) {
   document.body.style.background = gradient;
 }
 
-// Function to change header color
+// Thay đổi màu header
 function changeHeaderColor(color) {
   document.documentElement.style.setProperty("--header-color", color);
 }
 
-// Header color picker input handler
+// Header color picker
 headerColorPicker.addEventListener("input", function (e) {
   const color = e.target.value;
   changeHeaderColor(color);
-
-  // Remove active class from all header presets
   headerPresetColors.forEach((preset) => preset.classList.remove("active"));
 });
 
@@ -642,36 +405,33 @@ headerPresetColors.forEach((preset) => {
     const color = this.getAttribute("data-color");
     changeHeaderColor(color);
     headerColorPicker.value = color;
-
-    // Update active state
     headerPresetColors.forEach((p) => p.classList.remove("active"));
     this.classList.add("active");
   });
 });
 
-// Color picker input handler (background)
+// Background color picker
 colorPicker.addEventListener("input", function (e) {
   const color = e.target.value;
-  const gradient = `linear-gradient(135deg, ${color} 0%, ${adjustBrightness(color, -20)} 100%)`;
+  const gradient = `linear-gradient(135deg, ${color} 0%, ${adjustBrightness(
+    color,
+    -20
+  )} 100%)`;
   changeBackground(gradient);
-
-  // Remove active class from all presets
   presetColors.forEach((preset) => preset.classList.remove("active"));
 });
 
-// Preset color buttons (background)
+// Preset color buttons
 presetColors.forEach((preset) => {
   preset.addEventListener("click", function () {
     const gradient = this.getAttribute("data-gradient");
     changeBackground(gradient);
-
-    // Update active state
     presetColors.forEach((p) => p.classList.remove("active"));
     this.classList.add("active");
   });
 });
 
-// Helper function to adjust color brightness
+// Helper function
 function adjustBrightness(color, percent) {
   const num = parseInt(color.replace("#", ""), 16);
   const amt = Math.round(2.55 * percent);
@@ -691,7 +451,99 @@ function adjustBrightness(color, percent) {
   );
 }
 
-// Initialize on load
+// Tạo controls cho hiệu ứng sóng
+function createWaveControls() {
+  const controlsDiv = document.querySelector(".controls");
+
+  const waveControlsHTML = `
+    <div class="wave-controls-section">
+      <div class="color-picker-label">🌊 Cài Đặt Sóng</div>
+      
+      <div class="wave-control-group">
+        <label class="wave-label">Thời gian sóng (ms):</label>
+        <input type="range" id="wave-duration" min="2000" max="10000" value="${waveConfig.duration}" step="500">
+        <span id="duration-value">${waveConfig.duration}</span>
+      </div>
+      
+      <div class="wave-control-group">
+        <label class="wave-label">Tốc độ di chuyển (ms):</label>
+        <input type="range" id="wave-speed" min="20" max="200" value="${waveConfig.speed}" step="10">
+        <span id="speed-value">${waveConfig.speed}</span>
+      </div>
+      
+      <div class="wave-control-group">
+        <label class="wave-label">Tốc độ nổi/lặn (ms):</label>
+        <input type="range" id="bounce-speed" min="100" max="500" value="${waveConfig.bounceSpeed}" step="50">
+        <span id="bounce-value">${waveConfig.bounceSpeed}</span>
+      </div>
+      
+      <div class="wave-control-group">
+        <label class="wave-label">Hướng sóng:</label>
+        <div class="wave-direction-buttons">
+          <button class="wave-dir-btn ${
+            waveConfig.direction === "row" ? "active" : ""
+          }" data-direction="row">Hàng →</button>
+          <button class="wave-dir-btn ${
+            waveConfig.direction === "column" ? "active" : ""
+          }" data-direction="column">Cột ↓</button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  controlsDiv.insertAdjacentHTML("beforeend", waveControlsHTML);
+
+  // Event listeners
+  const durationSlider = document.getElementById("wave-duration");
+  const speedSlider = document.getElementById("wave-speed");
+  const bounceSlider = document.getElementById("bounce-speed");
+  const durationValue = document.getElementById("duration-value");
+  const speedValue = document.getElementById("speed-value");
+  const bounceValue = document.getElementById("bounce-value");
+  const directionBtns = document.querySelectorAll(".wave-dir-btn");
+
+  durationSlider.addEventListener("input", (e) => {
+    waveConfig.duration = parseInt(e.target.value);
+    durationValue.textContent = waveConfig.duration;
+  });
+
+  speedSlider.addEventListener("input", (e) => {
+    waveConfig.speed = parseInt(e.target.value);
+    speedValue.textContent = waveConfig.speed;
+  });
+
+  bounceSlider.addEventListener("input", (e) => {
+    waveConfig.bounceSpeed = parseInt(e.target.value);
+    bounceValue.textContent = waveConfig.bounceSpeed;
+    document.documentElement.style.setProperty(
+      "--wave-bounce-duration",
+      waveConfig.bounceSpeed + "ms"
+    );
+  });
+
+  directionBtns.forEach((btn) => {
+    btn.addEventListener("click", function () {
+      directionBtns.forEach((b) => b.classList.remove("active"));
+      this.classList.add("active");
+      waveConfig.direction = this.dataset.direction;
+    });
+  });
+}
+
+// Khởi tạo
 window.onload = function () {
   initEnvelopes();
+  createWaveControls();
+  document.documentElement.style.setProperty(
+    "--wave-bounce-duration",
+    waveConfig.bounceSpeed + "ms"
+  );
 };
+
+// Event listeners
+document.getElementById("start-btn").addEventListener("click", startAnimation);
+
+// Xử lý resize window để tự động điều chỉnh kích thước phong bì
+window.addEventListener("resize", function () {
+  initEnvelopes();
+});
