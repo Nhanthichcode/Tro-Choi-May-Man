@@ -1,0 +1,886 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bao Lì Xì May Mắn</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        transition: all 0.3s ease;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(
+          135deg,
+          #ffe5e5 0%,
+          #ffb6c1 50%,
+          #ffc0cb 100%
+        );
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+        overflow-x: hidden;
+        transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 15px;
+        color: #dc143c;
+        text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
+      }
+
+      .header h1 {
+        font-size: 2em;
+        margin-bottom: 5px;
+        animation: glow 2s ease-in-out infinite;
+      }
+
+      @keyframes glow {
+        0%,
+        100% {
+          text-shadow:
+            2px 2px 4px rgba(255, 255, 255, 0.8),
+            0 0 15px #dc143c;
+        }
+        50% {
+          text-shadow:
+            2px 2px 4px rgba(255, 255, 255, 0.8),
+            0 0 25px #dc143c,
+            0 0 35px #ff6b6b;
+        }
+      }
+
+      .main-container {
+        display: flex;
+        gap: 20px;
+        width: 100%;
+        max-width: 1400px;
+        align-items: flex-start;
+        position: relative;
+      }
+
+      /* Controls Styles */
+      .controls-wrapper {
+        position: fixed;
+        left: 20px;
+        top: 20px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .controls-toggle {
+        position: relative;
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #ffd700, #ffa500);
+        border: 2px solid #b8860b;
+        border-radius: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8em;
+        color: #8b0000;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s;
+        z-index: 1001;
+      }
+
+      .controls-toggle:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+      }
+
+      .controls {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        width: 250px;
+        background: rgba(0, 0, 0, 0.85);
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-20px);
+        transition: all 0.3s ease;
+        margin-top: 10px;
+        border: 1px solid #ffd700;
+      }
+
+      .controls-wrapper:hover .controls {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .btn {
+        padding: 12px 20px;
+        font-size: 1em;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s;
+        font-weight: bold;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+      }
+
+      .btn:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+      }
+
+      .btn-import {
+        background: linear-gradient(135deg, #4caf50, #45a049);
+        color: white;
+      }
+      .btn-start {
+        background: linear-gradient(135deg, #ffd700, #ffa500);
+        color: #8b0000;
+      }
+      .btn-start:disabled {
+        background: #999;
+        cursor: not-allowed;
+        color: #666;
+      }
+
+      .color-picker-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .color-picker-label {
+        color: white;
+        font-size: 0.9em;
+        font-weight: bold;
+      }
+      .color-picker-container {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+      .color-input {
+        width: 50px;
+        height: 40px;
+        border: 2px solid #ffd700;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      .preset-colors {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+      }
+      .preset-color {
+        width: 30px;
+        height: 30px;
+        border-radius: 6px;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.3s;
+      }
+      .preset-color.active {
+        border-color: #ffd700;
+        box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+      }
+
+      .file-input-wrapper {
+        position: relative;
+      }
+      .file-input-wrapper input[type="file"] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .info-text {
+        color: white;
+        font-size: 0.9em;
+        text-align: center;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 8px 12px;
+        border-radius: 8px;
+        line-height: 1.4;
+      }
+
+      .game-container {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+      }
+
+      .envelope-container {
+        width: 100%;
+        max-width: 1430px;
+        height: 85vh;
+        position: relative;
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      }
+
+      @media (max-width: 480px) {
+        .envelope-container {
+          height: 80vh;
+          padding: 10px;
+        }
+      }
+
+      .envelope {
+        position: absolute;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: var(--w, 90px);
+        height: var(--h, 118px);
+        opacity: 0;
+        transition:
+          opacity 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+          transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
+          filter 0.3s;
+      }
+      .envelope.appeared {
+        opacity: 1;
+      }
+
+      .envelope.bouncing svg {
+        animation: bounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+      }
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0) scale(1);
+        }
+        50% {
+          transform: translateY(-24px) scale(1.08);
+        }
+      }
+
+      .envelope.fading {
+        animation: fadeOut 0.8s ease-out forwards;
+      }
+      @keyframes fadeOut {
+        to {
+          opacity: 0.15;
+        }
+      }
+
+      .envelope.winner-highlight {
+        z-index: 10;
+      }
+      .envelope.winner-highlight svg {
+        animation: winnerGlow 1s ease-in-out infinite;
+      }
+      @keyframes winnerGlow {
+        0%,
+        100% {
+          filter: drop-shadow(0 0 12px #ffd700);
+          transform: scale(1.12);
+        }
+        50% {
+          filter: drop-shadow(0 0 22px #ffd700);
+          transform: scale(1.18);
+        }
+      }
+
+      .envelope svg {
+        width: 100%;
+        height: 100%;
+        filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+        transition: all 0.3s;
+      }
+      .envelope:hover svg {
+        filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5));
+        transform: scale(1.05);
+      }
+
+      /* Overlay */
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        backdrop-filter: blur(10px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        transition: all 0.5s ease;
+      }
+      .overlay.active {
+        display: flex;
+        animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      @keyframes fadeIn {
+        0% {
+          opacity: 0;
+          backdrop-filter: blur(0px);
+        }
+        100% {
+          opacity: 1;
+          backdrop-filter: blur(5px);
+        }
+      }
+
+      .result-wrapper {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+
+      .envelope-stage {
+        animation: stageIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        transition:
+          opacity 0.4s ease,
+          transform 0.4s ease;
+      }
+      .envelope-stage.hidden {
+        opacity: 0;
+        transform: scale(0.85);
+        pointer-events: none;
+      }
+      @keyframes stageIn {
+        0% {
+          opacity: 0;
+          transform: scale(0.15);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      .svg-wrap-result {
+        position: relative;
+        width: 220px;
+        height: 290px;
+        overflow: visible;
+      }
+      .svg-wrap-result svg {
+        width: 100%;
+        height: 100%;
+        border-radius: 8px;
+      }
+
+      .paper-pop {
+        position: absolute;
+        left: 50%;
+        top: 35%;
+        width: 82%;
+        transform: translateX(-50%) scale(0.85);
+        background: linear-gradient(180deg, #fff 0%, #f0f0ee 100%);
+        border-radius: 6px;
+        padding: 14px 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        opacity: 0;
+        transition:
+          top 0.7s,
+          opacity 0.5s,
+          transform 0.6s;
+        z-index: 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.82em;
+        color: #333;
+      }
+      .paper-pop .p-title {
+        color: #dc143c;
+        font-weight: bold;
+        border-bottom: 1px solid #eee;
+        width: 100%;
+        text-align: center;
+      }
+      .paper-pop .p-line {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+      }
+      .paper-pop.popped {
+        top: -38%;
+        opacity: 1;
+        transform: translateX(-50%) scale(1);
+      }
+
+      .result-card {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+        z-index: 100;
+      }
+      .result-card.visible {
+        pointer-events: auto;
+      }
+      .result-card-inner {
+        background: linear-gradient(160deg, #fff 0%, #faf8f5 100%);
+        border-radius: 20px;
+        box-shadow: 0 12px 48px rgba(0, 0, 0, 0.28);
+        padding: 48px 56px;
+        width: min(560px, 90vw);
+        text-align: center;
+        border: 3px solid #ffd700;
+        opacity: 0;
+        transform: scale(0.35);
+      }
+      .result-card.visible .result-card-inner {
+        animation: cardPop 0.65s forwards;
+      }
+      @keyframes cardPop {
+        0% {
+          transform: scale(0.35);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .result-title {
+        font-size: 2em;
+        color: #dc143c;
+        font-weight: bold;
+        margin-bottom: 24px;
+      }
+      .result-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #eee;
+      }
+      .result-label {
+        font-weight: 700;
+        color: #888;
+        text-align: left;
+      }
+      .result-value {
+        font-size: 1.25em;
+        color: #111;
+        font-weight: 600;
+        text-align: right;
+      }
+
+      .close-btn {
+        margin-top: 28px;
+        padding: 12px 44px;
+        background: linear-gradient(135deg, #dc143c, #8b0000);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.05em;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>🧧 Bao Lì Xì May Mắn 🧧</h1>
+      <p style="font-size: 0.9em">Chúc Mừng Năm Mới</p>
+    </div>
+
+    <div class="main-container">
+      <div class="controls-wrapper">
+        <button class="controls-toggle">☰</button>
+        <div class="controls">
+          <div class="file-input-wrapper">
+            <label for="file-upload" class="btn btn-import">
+              <span style="position: relative; z-index: 1">📁 Nhập Excel</span>
+            </label>
+            <input id="file-upload" type="file" accept=".xlsx, .xls" />
+          </div>
+          <button id="start-btn" class="btn btn-start" disabled>
+            <span style="position: relative; z-index: 1">🎉 Quay Số</span>
+          </button>
+
+          <div class="color-picker-wrapper">
+            <div class="color-picker-label">🎨 Màu Nền</div>
+            <div class="color-picker-container">
+              <input
+                type="color"
+                id="bg-color-picker"
+                class="color-input"
+                value="#FFE5E5"
+              />
+            </div>
+            <div class="preset-colors">
+              <div
+                class="preset-color active"
+                data-gradient="linear-gradient(135deg, #FFE5E5 0%, #FFB6C1 50%, #FFC0CB 100%)"
+                style="
+                  background: linear-gradient(
+                    135deg,
+                    #ffe5e5 0%,
+                    #ffb6c1 50%,
+                    #ffc0cb 100%
+                  );
+                "
+              ></div>
+              <div
+                class="preset-color"
+                data-gradient="linear-gradient(135deg, #FF6B6B 0%, #DC143C 100%)"
+                style="
+                  background: linear-gradient(135deg, #ff6b6b 0%, #dc143c 100%);
+                "
+              ></div>
+              <div
+                class="preset-color"
+                data-gradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                style="
+                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                "
+              ></div>
+              <div
+                class="preset-color"
+                data-gradient="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
+                style="
+                  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+                "
+              ></div>
+            </div>
+          </div>
+          <div class="info-text" id="info-text">
+            Nhập file Excel (STT | MSSV | Họ lót | Tên)
+          </div>
+        </div>
+      </div>
+
+      <div class="game-container">
+        <div class="envelope-container" id="envelope-container"></div>
+      </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+
+    <script>
+      let studentList = [];
+      let isAnimating = false;
+      let envelopes = [];
+      let winnerIndex = -1;
+
+      // 1. Cấu hình hình ảnh bao lì xì
+      function createEnvelopeSVG(index) {
+        const patterns = [
+          // 0: PHÚC
+          `<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="g0-${index}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FF4444"/><stop offset="100%" stop-color="#C40000"/></linearGradient></defs>
+            <rect y="12" width="100" height="128" rx="10" fill="url(#g0-${index})"/>
+            <rect x="5" y="17" width="90" height="118" rx="7" fill="none" stroke="#FFD700" stroke-width="1.8" opacity="0.7"/>
+            <circle cx="50" cy="72" r="32" fill="#FFD700" opacity="0.92"/>
+            <text x="50" y="80" font-size="22" fill="#8B0000" text-anchor="middle" font-weight="bold" font-family="serif">Phúc</text>
+          </svg>`,
+          // 1: LỘC
+          `<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="g1-${index}" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FF2020"/><stop offset="100%" stop-color="#A00000"/></linearGradient></defs>
+            <rect y="12" width="100" height="128" rx="10" fill="url(#g1-${index})"/>
+            <rect x="5" y="17" width="90" height="118" rx="7" fill="none" stroke="#FFD700" stroke-width="1.8" opacity="0.7"/>
+            <circle cx="50" cy="72" r="32" fill="#FFD700" opacity="0.92"/>
+            <text x="50" y="80" font-size="22" fill="#8B0000" text-anchor="middle" font-weight="bold" font-family="serif">Lộc</text>
+          </svg>`,
+          // 2: THỌ
+          `<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="g2-${index}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E82828"/><stop offset="100%" stop-color="#8C0000"/></linearGradient></defs>
+            <rect y="12" width="100" height="128" rx="10" fill="url(#g2-${index})"/>
+            <rect x="5" y="17" width="90" height="118" rx="7" fill="none" stroke="#FFD700" stroke-width="1.8" opacity="0.7"/>
+            <circle cx="50" cy="72" r="32" fill="#FFD700" opacity="0.92"/>
+            <text x="50" y="80" font-size="22" fill="#8B0000" text-anchor="middle" font-weight="bold" font-family="serif">Thọ</text>
+          </svg>`,
+          // 3: HOA MAI
+          `<svg viewBox="0 0 100 140" xmlns="http://www.w3.org/2000/svg">
+            <defs><linearGradient id="g3-${index}" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#DC143C"/><stop offset="100%" stop-color="#8B0000"/></linearGradient></defs>
+            <rect y="12" width="100" height="128" rx="10" fill="url(#g3-${index})"/>
+            <rect x="5" y="17" width="90" height="118" rx="7" fill="none" stroke="#FFD700" stroke-width="1.8" opacity="0.7"/>
+            <path d="M50 135 Q48 100 35 75" stroke="#8B5E3C" stroke-width="3" fill="none"/>
+            <circle cx="30" cy="42" r="8" fill="#FFE566"/>
+            <circle cx="58" cy="55" r="6" fill="#FFD933"/>
+          </svg>`,
+        ];
+        return patterns[index % 4];
+      }
+
+      // 2. Tính toán lưới bao lì xì
+      function getLayout() {
+        const vw = window.innerWidth;
+        if (vw >= 1200) return { cols: 10, rows: 4, envW: 95, envH: 125 };
+        else if (vw >= 900) return { cols: 8, rows: 4, envW: 90, envH: 118 };
+        else if (vw >= 600) return { cols: 6, rows: 3, envW: 85, envH: 112 };
+        else return { cols: 4, rows: 3, envW: 62, envH: 82 };
+      }
+
+      // 3. Khởi tạo bao lì xì - XẾP THẲNG HÀNG
+      function initEnvelopes() {
+        const container = document.getElementById("envelope-container");
+        container.innerHTML = "";
+        envelopes = [];
+
+        const { cols, rows, envW, envH } = getLayout();
+        const total = cols * rows;
+        const cW = container.clientWidth || window.innerWidth * 0.92;
+        const cH = container.clientHeight || window.innerHeight * 0.82;
+        const padX = 18,
+          padY = 18;
+
+        const cellW = (cW - padX * 2) / cols;
+        const cellH = (cH - padY * 2) / rows;
+
+        for (let i = 0; i < total; i++) {
+          const col = i % cols;
+          const row = Math.floor(i / cols);
+
+          const baseX = padX + col * cellW + cellW / 2;
+          const baseY = padY + row * cellH + cellH / 2;
+
+          // Xóa bỏ tính toán Random Jitter -> Để thẳng hàng
+          const x = baseX - envW / 2;
+          const y = baseY - envH / 2;
+          const rot = 0; // Không xoay nghiêng
+
+          const envelope = document.createElement("div");
+          envelope.className = "envelope";
+          envelope.style.left = x + "px";
+          envelope.style.top = y + "px";
+          envelope.style.setProperty("--w", envW + "px");
+          envelope.style.setProperty("--h", envH + "px");
+
+          // Animation xuất hiện ban đầu
+          envelope.style.transform = `translateY(50px) scale(0.6)`;
+          envelope.dataset.finalTransform = `translateY(0) scale(1)`;
+
+          envelope.innerHTML = createEnvelopeSVG(i);
+          container.appendChild(envelope);
+          envelopes.push(envelope);
+
+          setTimeout(
+            () => {
+              envelope.style.transform = envelope.dataset.finalTransform;
+              envelope.classList.add("appeared");
+            },
+            60 + i * 20,
+          ); // Giảm delay để xuất hiện nhanh hơn
+        }
+      }
+
+      let _resizeTimer;
+      window.addEventListener("resize", () => {
+        clearTimeout(_resizeTimer);
+        _resizeTimer = setTimeout(() => {
+          if (!isAnimating) initEnvelopes();
+        }, 250);
+      });
+
+      // Xử lý file Excel
+      document
+        .getElementById("file-upload")
+        .addEventListener("change", function (e) {
+          const file = e.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            try {
+              const data = new Uint8Array(e.target.result);
+              const workbook = XLSX.read(data, { type: "array" });
+              const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+              const jsonData = XLSX.utils.sheet_to_json(firstSheet, {
+                header: 1,
+              });
+              studentList = jsonData
+                .filter(
+                  (row) =>
+                    row.length >= 4 && row[0] && row[1] && row[2] && row[3],
+                )
+                .map((row) => ({
+                  stt: row[0],
+                  mssv: row[1],
+                  hoLot: row[2],
+                  ten: row[3],
+                }));
+              if (studentList.length > 0) {
+                document.getElementById("info-text").textContent =
+                  `✅ Đã tải ${studentList.length} sinh viên. Nhấn "Quay Số" để chơi!`;
+                document.getElementById("start-btn").disabled = false;
+                initEnvelopes();
+              } else {
+                alert("File Excel không có dữ liệu hợp lệ!");
+              }
+            } catch (error) {
+              alert("Lỗi: " + error.message);
+            }
+          };
+          reader.readAsArrayBuffer(file);
+        });
+
+      // Bắt đầu quay
+      document
+        .getElementById("start-btn")
+        .addEventListener("click", function () {
+          if (isAnimating || studentList.length === 0) return;
+          isAnimating = true;
+          this.disabled = true;
+          document.getElementById("info-text").textContent =
+            "🎊 Đang quay số... 🎊";
+          winnerIndex = Math.floor(Math.random() * envelopes.length);
+
+          // Chỉ giữ hiệu ứng nhún nhảy
+          envelopes.forEach((envelope) => {
+            const delay = Math.random() * 500;
+            setTimeout(() => {
+              envelope.classList.add("bouncing");
+            }, delay);
+          });
+
+          const animationDuration = 4000;
+
+          setTimeout(() => {
+            envelopes.forEach((envelope, index) => {
+              if (index !== winnerIndex) {
+                envelope.classList.remove("bouncing");
+                envelope.classList.add("fading");
+              }
+            });
+
+            setTimeout(() => {
+              envelopes[winnerIndex].classList.remove("bouncing");
+              envelopes[winnerIndex].classList.add("winner-highlight");
+
+              // Đã xóa createFireworks()
+
+              setTimeout(() => {
+                showWinner();
+              }, 800);
+            }, 1000);
+          }, animationDuration);
+        });
+
+      function showWinner() {
+        const winner =
+          studentList[Math.floor(Math.random() * studentList.length)];
+        const overlay = document.getElementById("overlay");
+
+        // Đã xóa createConfetti()
+
+        overlay.innerHTML = `
+          <div class="result-wrapper" id="result-wrapper">
+            <div class="envelope-stage" id="envelope-stage">
+              <div class="svg-wrap-result">${createEnvelopeSVG(winnerIndex)}
+                <div class="paper-pop" id="paper-pop">
+                  <div class="p-title">🎉 CHÚC MỪNG 🎉</div>
+                  <div class="p-line"><div>${winner.hoLot} ${winner.ten}</div></div>
+                </div>
+              </div>
+            </div>
+            <div class="result-card" id="result-card">
+              <div class="result-card-inner">
+                <div class="result-title">🎉 CHÚC MỪNG 🎉</div>
+                <div class="result-row"><span class="result-label">STT</span><span class="result-value">${winner.stt}</span></div>
+                <div class="result-row"><span class="result-label">MSSV</span><span class="result-value">${winner.mssv}</span></div>
+                <div class="result-row"><span class="result-label">Họ tên</span><span class="result-value">${winner.hoLot} ${winner.ten}</span></div>
+                <button class="close-btn" onclick="closeOverlay()">Đóng</button>
+              </div>
+            </div>
+          </div>
+        `;
+
+        overlay.classList.add("active");
+
+        // Đã xóa createFallingSparkles()
+
+        setTimeout(() => {
+          const paperPop = document.getElementById("paper-pop");
+          if (paperPop) paperPop.classList.add("popped");
+        }, 1200);
+
+        setTimeout(() => {
+          const stage = document.getElementById("envelope-stage");
+          const card = document.getElementById("result-card");
+          const paperPop = document.getElementById("paper-pop");
+
+          if (stage) stage.classList.add("hidden");
+          if (card) card.classList.add("visible");
+
+          // SỬA QUAN TRỌNG: Ẩn ngay lá thăm nhỏ
+          if (paperPop) {
+            paperPop.style.opacity = "0";
+          }
+        }, 2600);
+      }
+
+      function closeOverlay() {
+        document.getElementById("overlay").classList.remove("active");
+        document.getElementById("start-btn").disabled = false;
+        document.getElementById("info-text").textContent =
+          `✅ Đã tải ${studentList.length} sinh viên. Nhấn "Quay Số" để chơi!`;
+        isAnimating = false;
+        envelopes.forEach((envelope) => {
+          envelope.classList.remove("bouncing", "fading", "winner-highlight");
+        });
+        initEnvelopes();
+      }
+
+      const colorPicker = document.getElementById("bg-color-picker");
+      const presetColors = document.querySelectorAll(".preset-color");
+      function changeBackground(gradient) {
+        document.body.style.background = gradient;
+      }
+      colorPicker.addEventListener("input", function (e) {
+        const color = e.target.value;
+        const gradient = `linear-gradient(135deg, ${color} 0%, ${adjustBrightness(color, -20)} 100%)`;
+        changeBackground(gradient);
+        presetColors.forEach((preset) => preset.classList.remove("active"));
+      });
+      presetColors.forEach((preset) => {
+        preset.addEventListener("click", function () {
+          const gradient = this.getAttribute("data-gradient");
+          changeBackground(gradient);
+          presetColors.forEach((p) => p.classList.remove("active"));
+          this.classList.add("active");
+        });
+      });
+      function adjustBrightness(color, percent) {
+        const num = parseInt(color.replace("#", ""), 16);
+        const amt = Math.round(2.55 * percent);
+        const R = (num >> 16) + amt;
+        const G = ((num >> 8) & 0x00ff) + amt;
+        const B = (num & 0x0000ff) + amt;
+        return (
+          "#" +
+          (
+            0x1000000 +
+            (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +
+            (G < 255 ? (G < 1 ? 0 : G) : 255) * 0x100 +
+            (B < 255 ? (B < 1 ? 0 : B) : 255)
+          )
+            .toString(16)
+            .slice(1)
+        );
+      }
+
+      window.onload = function () {
+        initEnvelopes();
+      };
+    </script>
+  </body>
+</html>
