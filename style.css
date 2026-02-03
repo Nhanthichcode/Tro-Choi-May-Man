@@ -1,4 +1,4 @@
-* {
+   * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -70,7 +70,7 @@ body {
 .controls-wrapper {
   position: fixed;
   left: 20px;
-  top: 20px; /* Cách đỉnh màn hình 20px (ngang tiêu đề) */
+  top: 20px;
   z-index: 1000;
   display: flex;
   flex-direction: column;
@@ -79,7 +79,7 @@ body {
 
 /* Nút Toggle: Chuyển thành hình vuông nhỏ gọn ở góc */
 .controls-toggle {
-  position: relative; /* Không dùng absolute nữa */
+  position: relative;
   width: 50px;
   height: 50px;
   background: linear-gradient(135deg, #ffd700, #ffa500);
@@ -93,7 +93,7 @@ body {
   color: #8b0000;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   transition: all 0.3s;
-  z-index: 1001; /* Luôn nổi lên trên */
+  z-index: 1001;
 }
 
 .controls-toggle:hover {
@@ -106,19 +106,15 @@ body {
   display: flex;
   flex-direction: column;
   gap: 15px;
-  width: 250px; /* Tăng độ rộng một chút cho đẹp */
-  background: rgba(0, 0, 0, 0.85); /* Đậm hơn chút để dễ đọc */
+  width: 250px;
+  background: rgba(0, 0, 0, 0.85);
   padding: 20px;
   border-radius: 15px;
   box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.5);
-
-  /* Ẩn mặc định */
   opacity: 0;
   visibility: hidden;
   transform: translateY(-20px);
   transition: all 0.3s ease;
-
-  /* Đặt vị trí ngay dưới nút */
   margin-top: 10px;
   border: 1px solid #ffd700;
 }
@@ -355,8 +351,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: var(--w, 90px);
-  height: var(--h, 118px);
+  width: var(--w, 130px);
+  height: var(--h, 170px);
   opacity: 0;
   transition:
     opacity 0.45s cubic-bezier(0.34, 1.56, 0.64, 1),
@@ -365,19 +361,6 @@ body {
 }
 .envelope.appeared {
   opacity: 1;
-}
-
-.envelope.bouncing svg {
-  animation: bounce 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
-}
-@keyframes bounce {
-  0%,
-  100% {
-    transform: translateY(0) scale(1);
-  }
-  50% {
-    transform: translateY(-24px) scale(1.08);
-  }
 }
 
 .envelope.fading {
@@ -440,6 +423,16 @@ body {
 .overlay.active {
   display: flex;
   animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.overlay-content {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
 }
 
 /* ─── Result overlay: two-stage reveal ─── */
@@ -551,14 +544,13 @@ body {
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  /* SỬA: Thêm z-index cao để đè lên lá thăm nhỏ */
   z-index: 100;
 }
 .result-card.visible {
   pointer-events: auto;
 }
 .result-card-inner {
-  background: linear-gradient(160deg, #fff 0%, #faf8f5 100%);
+  background: linear-gradient(160deg, #ffffff 0%, #fffbf5 100%);
   border-radius: 20px;
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.28);
   padding: 48px 56px;
@@ -598,6 +590,8 @@ body {
   font-weight: bold;
   margin-bottom: 24px;
   text-shadow: 1px 1px 2px rgba(220, 20, 60, 0.25);
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 .result-row {
   display: flex;
@@ -619,7 +613,7 @@ body {
 }
 .result-value {
   font-size: 1.6em;
-  color: #111;
+  color: #000;
   font-weight: 600;
   text-align: right;
   word-break: break-word;
@@ -874,5 +868,261 @@ body {
     margin-top: 16px;
     padding: 10px 24px;
     font-size: 0.95em;
+  }
+}
+
+/* Wave Controls Styles */
+.wave-controls-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 215, 0, 0.3);
+  margin-top: 10px;
+}
+
+.wave-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.wave-label {
+  color: white;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+.wave-control-group input[type="range"] {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 215, 0, 0.2);
+  outline: none;
+  cursor: pointer;
+}
+
+.wave-control-group input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffd700, #ffa500);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s;
+}
+
+.wave-control-group input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+}
+
+.wave-control-group input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffd700, #ffa500);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s;
+}
+
+.wave-control-group input[type="range"]::-moz-range-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+}
+
+.wave-control-group span {
+  color: #ffd700;
+  font-weight: bold;
+  font-size: 0.9em;
+  text-align: center;
+}
+
+.wave-direction-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.wave-dir-btn {
+  flex: 1;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85em;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.wave-dir-btn:hover {
+  background: rgba(255, 215, 0, 0.2);
+  border-color: rgba(255, 215, 0, 0.5);
+  transform: translateY(-2px);
+}
+
+.wave-dir-btn.active {
+  background: linear-gradient(135deg, #ffd700, #ffa500);
+  color: #8b0000;
+  border-color: #b8860b;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 600px) {
+  .wave-controls-section {
+    gap: 10px;
+  }
+  
+  .wave-label {
+    font-size: 0.8em;
+  }
+  
+  .wave-dir-btn {
+    padding: 7px 10px;
+    font-size: 0.8em;
+  }
+}
+
+@media (max-width: 480px) {
+  .wave-controls-section {
+    gap: 8px;
+    padding-top: 10px;
+  }
+  
+  .wave-control-group {
+    gap: 5px;
+  }
+  
+  .wave-label {
+    font-size: 0.75em;
+  }
+  
+  .wave-dir-btn {
+    padding: 6px 8px;
+    font-size: 0.75em;
+  }
+}
+
+/* Wave effect - bao nổi lên khi sóng đi qua */
+.envelope.wave-active svg {
+  animation: wave-bounce var(--wave-bounce-duration, 200ms) cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes wave-bounce {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-35px) scale(1.12);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Thêm phần CSS mới cho hiệu ứng lấp lánh lâu hơn và di chuyển */
+.winner-glow-long {
+  z-index: 10;
+  position: relative;
+}
+
+.winner-glow-long svg {
+  animation: winnerGlowLong 3s ease-in-out infinite;
+}
+
+@keyframes winnerGlowLong {
+  0%, 100% {
+    filter: drop-shadow(0 0 15px #ffd700) drop-shadow(0 0 30px #ffa500) drop-shadow(0 0 45px #ff6b6b);
+    transform: scale(1.15);
+  }
+  50% {
+    filter: drop-shadow(0 0 25px #ffd700) drop-shadow(0 0 50px #ffa500) drop-shadow(0 0 75px #ff6b6b) drop-shadow(0 0 100px #dc143c);
+    transform: scale(1.25);
+  }
+}
+
+/* Thêm phần cho envelope di chuyển ra giữa */
+.envelope-move-to-center {
+  animation: moveToCenter 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+  position: fixed !important;
+  z-index: 1002 !important;
+}
+
+@keyframes moveToCenter {
+  0% {
+    transform: scale(1);
+    top: var(--start-top);
+    left: var(--start-left);
+  }
+  100% {
+    transform: scale(1.5);
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) scale(1.5) !important;
+  }
+}
+
+/* Thêm phần CSS cho envelope container tự động điều chỉnh */
+.envelope-container.auto-grid {
+  grid-template-columns: repeat(auto-fill, minmax(var(--envelope-size, 90px), 1fr)) !important;
+}
+
+.envelope.used {
+  opacity: 0.4 !important;
+  filter: grayscale(100%) !important;
+  pointer-events: none;
+}
+
+.envelope.is-waving {
+  will-change: transform;
+  transition: none !important;
+}
+
+/* Thêm animation cho nhấp nháy khi sóng kết thúc */
+@keyframes winnerBlink {
+  0%, 100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 12px #FFD700) drop-shadow(0 0 24px #FFA500);
+    transform: scale(1.1);
+  }
+  50% {
+    opacity: 0.6;
+    filter: drop-shadow(0 0 8px #FFD700) drop-shadow(0 0 16px #FFA500);
+    transform: scale(1);
+  }
+}
+
+.envelope.winner-blink {
+  animation: winnerBlink 0.5s ease-in-out infinite;
+  z-index: 999;
+}
+
+/* Animation di chuyển vào giữa */
+@keyframes moveToCenterFixed {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    transform: translate(var(--move-dx), var(--move-dy)) scale(1.5);
+  }
+}
+
+.envelope.winner-move-to-center {
+  animation: moveToCenterFixed 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  filter: drop-shadow(0 0 20px #FFD700);
+}
+
+/* Fading animation */
+.envelope.fading {
+  animation: fadeOut 0.8s ease-out forwards;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0.15;
   }
 }
