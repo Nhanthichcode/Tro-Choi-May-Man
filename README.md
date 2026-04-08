@@ -40,6 +40,7 @@ Chỉ với 3 bước đơn giản để tìm ra người may mắn:
 1.  **Chuẩn bị dữ liệu:** Tạo một file Excel theo đúng cấu trúc mẫu ở trên.
 2.  **Tải file lên:** Truy cập vào [Trang web Quay Số](https://nhanthichcode.github.io/Tro-Choi-May-Man/) và nhấn nút tải file Excel của bạn lên.
 3.  **Bắt đầu quay:** Nhấn nút quay thưởng và hồi hộp chờ đợi cái tên may mắn nhất xuất hiện trên màn hình!
+* Lưu Ý: để dễ quan sát, nên chỉnh thanh tốc độ và thời gian sóng lên khoản 70%
 
 ---
 
