@@ -463,8 +463,8 @@ function createWaveControls() {
   const html = `
     <div class="wave-controls-section">
       <div class="color-picker-label">🌊 Cài Đặt Sóng</div>
-      <div class="wave-control-group"><label class="wave-label">Thời gian</label><input type="range" id="wave-duration" min="2000" max="10000" value="${waveConfig.duration}" step="500"></div>
-      <div class="wave-control-group"><label class="wave-label">Tốc độ</label><input type="range" id="wave-speed" min="20" max="200" value="${waveConfig.speed}" step="10"></div>
+      <div class="wave-control-group"><label class="wave-label">Thời gian</label><input type="range" id="wave-duration" min="2000" max="10000" value="${waveConfig.duration}" step="6000"></div>
+      <div class="wave-control-group"><label class="wave-label">Tốc độ</label><input type="range" id="wave-speed" min="20" max="200" value="${waveConfig.speed}" step="140"></div>
       <div class="wave-control-group"><label class="wave-label">Hướng</label><div class="wave-direction-buttons"><button class="wave-dir-btn active" data-dir="row">Hàng</button><button class="wave-dir-btn" data-dir="column">Cột</button></div></div>
     </div>`;
   controlsDiv.insertAdjacentHTML('beforeend', html);
